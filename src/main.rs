@@ -6,5 +6,5 @@ mod days;
 use days::day_2::solve;
 
 fn main() {
-  solve(true)
+  solve(false)
 }
