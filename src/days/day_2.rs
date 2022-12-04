@@ -27,7 +27,22 @@ fn solve_1(input: &str) {
 }
 
 fn solve_2(input: &str) {
-  
+  // Split lines
+  let moves: Vec<&str> = input.split("\n").collect();
+
+  let mut score = 0;
+  for m in moves {
+    // Grab the elf move, and your move, convert both to chars
+    let the_moves: Vec<char> = m.split(" ").map(|x| x.chars().nth(0).unwrap()).collect();
+
+    // Get the move we need to play to reach the given game result
+    let move_to_play = move_to_get_game_result(char_to_game_result(the_moves[1]), char_to_move(the_moves[0]));
+
+    // Calculate score
+    score += score_for_move(move_to_play) + game_result_to_score(char_to_game_result(the_moves[1]));
+  }
+
+  println!("{}", score)
 }
 
 // score_for_move returns the score you receive for using the given move
@@ -83,5 +98,36 @@ fn char_to_move(m: char) -> Move {
     'B'|'Y' => return Move::Paper,
     'C'|'Z' => return Move::Scissors,
     _ => return Move::Rock,
+  }
+}
+
+fn char_to_game_result(c: char) -> GameResult {
+  match c {
+    'X' => GameResult::Lose,
+    'Y' => GameResult::Draw,
+    'Z' => GameResult::Win,
+    _ => GameResult::Lose,
+  }
+}
+
+// move_to_get_game_result returns the move you need to make to reach the given 
+// game result with the given move being played by the opponent
+fn move_to_get_game_result(result: GameResult, opponent_move: Move) -> Move {
+  match opponent_move {
+    Move::Rock => match result {
+      GameResult::Lose => Move::Scissors,
+      GameResult::Draw => Move::Rock,
+      GameResult::Win => Move::Paper,
+    },
+    Move::Paper => match result {
+      GameResult::Lose => Move::Rock,
+      GameResult::Draw => Move::Paper,
+      GameResult::Win => Move::Scissors,
+    },
+    Move::Scissors => match result {
+      GameResult::Lose => Move::Paper,
+      GameResult::Draw => Move::Scissors,
+      GameResult::Win => Move::Rock,
+    }
   }
 }
