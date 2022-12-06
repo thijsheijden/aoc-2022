@@ -11,6 +11,41 @@ pub fn solve(test_input: bool) {
 }
 
 fn solve_1(input: &str) {
+  let section_start_end_per_pair = get_elf_ranges(input);
+
+  // Check if one of the ranges fully contains the other
+  let mut number_of_encompassed_sections = 0;
+  for elf_pair in section_start_end_per_pair {
+    // Check if elf 1 start and end sections encompas those of elf 2
+    if elf_pair[0][0] <= elf_pair[1][0] && elf_pair[0][1] >= elf_pair[1][1] {
+      // Elf 1 fully encompasses sections of elf 2
+      number_of_encompassed_sections += 1;
+    } else if elf_pair[1][0] <= elf_pair[0][0] && elf_pair[1][1] >= elf_pair[0][1] {
+      // Elf 2 fully encompasses sections of elf 1
+      number_of_encompassed_sections += 1;
+    }
+  }
+
+  println!("{}", number_of_encompassed_sections)
+}
+
+fn solve_2(input: &str) {
+  let section_start_end_per_pair = get_elf_ranges(input);
+
+  // Check if one of the ranges partially contains the other
+  let mut number_of_overlapping_sections = 0;
+  for elf_pair in section_start_end_per_pair {
+    // Check if the end of elf 1 range is larger than or equal to the start of the range of elf 2
+    // and the end of the range of elf 2 is less than or equal to the start of the range of elf 1
+    if elf_pair[0][1] >= elf_pair[1][0] && elf_pair[0][0] <= elf_pair[1][1] {
+      number_of_overlapping_sections += 1;
+    }
+  }
+
+  println!("{}", number_of_overlapping_sections)
+}
+
+fn get_elf_ranges(input: &str) -> Vec<Vec<Vec<i32>>> {
   // Get every pair
   let pairs: Vec<&str> = input.split("\n").collect();
 
@@ -34,22 +69,5 @@ fn solve_1(input: &str) {
         collect()).
       collect();
 
-  // Check if one of the ranges fully contains the other
-  let mut number_of_encompassed_sections = 0;
-  for elf_pair in section_start_end_per_pair {
-    // Check if elf 1 start and end sections encompas those of elf 2
-    if elf_pair[0][0] <= elf_pair[1][0] && elf_pair[0][1] >= elf_pair[1][1] {
-      // Elf 1 fully encompasses sections of elf 2
-      number_of_encompassed_sections += 1;
-    } else if elf_pair[1][0] <= elf_pair[0][0] && elf_pair[1][1] >= elf_pair[0][1] {
-      // Elf 2 fully encompasses sections of elf 1
-      number_of_encompassed_sections += 1;
-    }
-  }
-
-  println!("{}", number_of_encompassed_sections)
-}
-
-fn solve_2(input: &str) {
-  
+  return section_start_end_per_pair;
 }
