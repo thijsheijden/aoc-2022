@@ -1,5 +1,5 @@
 use crate::helpers::input::read_file as read_file;
-use std::{collections::HashSet};
+use std::{collections::{HashSet, hash_set::Intersection}};
 
 pub fn solve(test_input: bool) {
   if test_input {
@@ -27,8 +27,6 @@ fn solve_1(input: &str) {
     // Determine the item that is in both compartments
     let characters_present_in_both_compartments: HashSet<&char> = compartment_1_hashset.intersection(&compartment_2_hashset).collect();
 
-    println!("{:?}", characters_present_in_both_compartments);
-
     // Calculate priority
     for c in characters_present_in_both_compartments {
       if c.is_ascii_lowercase() {
@@ -43,5 +41,35 @@ fn solve_1(input: &str) {
 }
 
 fn solve_2(input: &str) {
-  
+  // Split into backpacks
+  let backpacks: Vec<&str> = input.split("\n").collect();
+
+  // Chunk them into groups of 3
+  let groups = backpacks.as_slice().chunks(3);
+
+  let mut total_priority = 0;
+  for group in groups {
+    // For each group find the common character and calculate priority
+    // Convert all three group member backpacks into hash sets
+    let hash_sets: Vec<HashSet<char>> = group.iter().map(|x| HashSet::from_iter(x.chars())).collect();
+
+    // Compute intersection
+    let iter = hash_sets.iter();
+    let common_character = iter
+        .skip(1)
+        .fold(hash_sets[0].clone(), |acc, hs| {
+            acc.intersection(hs).cloned().collect()
+        });
+
+    // Calculate priority
+    for c in common_character {
+      if c.is_ascii_lowercase() {
+        total_priority += c as u32 - 96;
+      } else if c.is_ascii_uppercase() {
+        total_priority += c as u32 - 38;
+      }
+    }
+  }
+
+  println!("{}", total_priority)
 }
