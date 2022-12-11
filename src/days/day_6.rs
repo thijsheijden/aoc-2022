@@ -33,7 +33,25 @@ fn solve_1(input: &str) {
 }
 
 fn solve_2(input: &str) {
-  
+  // Read in the first four characters
+  let mut window: &str = "";
+  let (mut i, mut j) = (0, 13); // Sliding window start and end index
+
+  while j < input.len() {
+    // Grab the 13 characters the window is on now
+    let window = &input.to_string()[i..=j];
+
+    // Check if str contains only unique chars
+    match unique_chars(window) {
+      None => break,
+      Some(_) => (),
+    }
+
+    // Slide window
+    (i, j) = (i+1, j+1);
+  }
+
+  println!("Day 6 puzzle 2 answer: {}", j+1)
 }
 
 fn unique_chars(s: &str) -> Option<(usize, usize, char)> {
